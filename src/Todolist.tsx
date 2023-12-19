@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { AddItemForm } from "./AddItemForm";
 import { FilterValuesType } from "./App";
 
 export type TaskType = {
@@ -20,29 +20,10 @@ type TodolistType = {
 }
 
 export function Todolist(todolistProps: TodolistType) {
-    const [title, setTitle] = useState("");
-    const [error, setError] = useState<string | null>(null);
-
-    const onNewTitleChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.currentTarget.value);
-
-    const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
-        e.key === "Enter" && addTask();
-    }
-
     const onAllClickHandler = () => todolistProps.changeFilter("all", todolistProps.id);
     const onActiveClickHandler = () => todolistProps.changeFilter("active", todolistProps.id);
     const onCompletedClickHandler = () => todolistProps.changeFilter("completed", todolistProps.id);
     const removeTodolist = () => todolistProps.removeTodolist(todolistProps.id);
-
-    function addTask() {
-        if (title.trim() !== '') {
-            todolistProps.addTask(title.trim(), todolistProps.id);
-            setTitle('');
-        } else {
-            setError("Title is required");
-        }
-    }
 
     function Task(taskProps: TaskType) {
         const onRemoveHandler = () => todolistProps.removeTask(taskProps.id, todolistProps.id);
@@ -63,19 +44,12 @@ export function Todolist(todolistProps: TodolistType) {
         );
     }
 
+    const addTask = (title: string) => todolistProps.addTask(title, todolistProps.id);
+
     return (
         <div>
             <h3>{todolistProps.title} <button onClick={removeTodolist}>x</button></h3>
-            <div>
-                <input
-                    className={error ? "error" : ""}
-                    value={title}
-                    onChange={onNewTitleChangeHandler}
-                    onKeyDown={onKeyDownHandler}
-                />
-                <button onClick={addTask}>+</button>
-                {error && <div className="error-message">{error}</div>}
-            </div>
+            <AddItemForm addItem={addTask} />
             <ul>{todolistProps.tasks.map(t => <Task key={t.id} id={t.id} title={t.title} isDone={t.isDone} />)}</ul>
             <div>
                 <button
