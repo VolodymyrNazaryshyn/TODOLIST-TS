@@ -54,12 +54,28 @@ function App() {
     setTasksObj({ ...tasksObj });
   }
 
-  function changeStatus(taskId: string, isDone: boolean, todolistId: string) {
+  function changeTaskStatus(taskId: string, isDone: boolean, todolistId: string) {
+    // get the right array by todolistId
     const tasks = tasksObj[todolistId];
+    // find the necessary task
     const task = tasks.find(t => t.id === taskId);
-
+    // change the task if it is found
     if (task) {
       task.isDone = isDone;
+      // set in the state copy of the object to react by redraw
+      setTasksObj({ ...tasksObj });
+    }
+  }
+
+  function changeTaskTitle(taskId: string, newTitle: string, todolistId: string) {
+    // get the right array by todolistId
+    const tasks = tasksObj[todolistId];
+    // find the necessary task
+    const task = tasks.find(t => t.id === taskId);
+    // change the task if it is found
+    if (task) {
+      task.title = newTitle;
+      // set in the state copy of the object to react by redraw
       setTasksObj({ ...tasksObj });
     }
   }
@@ -73,11 +89,20 @@ function App() {
     }
   }
 
-  const removeTodolist = (todolistId: string) => {
+  function removeTodolist(todolistId: string) {
     const filteredTodolist = todolists.filter(tl => tl.id !== todolistId);
     setTodolists(filteredTodolist);
     delete tasksObj[todolistId];
     setTasksObj({ ...tasksObj });
+  }
+
+  function changeTodolistTitle(todolistId: string, newTitle: string) {
+    const todolist = todolists.find(tl => tl.id === todolistId);
+
+    if (todolist) {
+      todolist.title = newTitle;
+      setTodolists([...todolists]);
+    }
   }
 
   function Todolists(tlProps: TodolistsType) {
@@ -95,9 +120,11 @@ function App() {
         removeTask={removeTask}
         changeFilter={changeFilter}
         addTask={addTask}
-        changeTaskStatus={changeStatus}
+        changeTaskStatus={changeTaskStatus}
+        changeTaskTitle={changeTaskTitle}
         filter={tlProps.filter}
         removeTodolist={removeTodolist}
+        changeTodolistTitle={changeTodolistTitle}
       />
     )
   }
