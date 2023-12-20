@@ -1,6 +1,8 @@
 import { AddItemForm } from "./AddItemForm";
 import { EditableSpan } from "./EditableSpan";
 import { FilterValuesType } from "./App";
+import { Button, Checkbox, IconButton } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 
 export type TaskType = {
     id: string
@@ -30,43 +32,41 @@ export function Todolist(todolistProps: TodolistType) {
     const changeTodolistTitle = (newTitle: string) => todolistProps.changeTodolistTitle(todolistProps.id, newTitle);
 
     function Task(taskProps: TaskType) {
-        const onRemoveHandler = () => todolistProps.removeTask(taskProps.id, todolistProps.id);
+        const onClickHandler = () => todolistProps.removeTask(taskProps.id, todolistProps.id);
         const onChangeStatusHandler = (e: React.ChangeEvent<HTMLInputElement>) => todolistProps.changeTaskStatus(taskProps.id, e.currentTarget.checked, todolistProps.id);
         const onChangeTitleHandler = (newValue: string) => todolistProps.changeTaskTitle(taskProps.id, newValue, todolistProps.id);
 
         return (
-            <li className={taskProps.isDone ? "is-done" : ''}>
-                <input
-                    type="checkbox"
+            <div className={taskProps.isDone ? "is-done" : ''}>
+                <Checkbox
                     checked={taskProps.isDone}
                     onChange={onChangeStatusHandler}
                 />
-                <EditableSpan
-                    title={taskProps.title}
-                    onChange={onChangeTitleHandler} />
-                <button onClick={onRemoveHandler}>x</button>
-            </li>
+                <EditableSpan title={taskProps.title} onChange={onChangeTitleHandler} />
+                <IconButton onClick={onClickHandler}><Delete /></IconButton>
+            </div>
         );
     }
 
     const addTask = (title: string) => todolistProps.addTask(title, todolistProps.id);
 
-    return (
+    return <>
+        <h3>
+            <EditableSpan title={todolistProps.title} onChange={changeTodolistTitle} />
+            <IconButton onClick={removeTodolist}><Delete /></IconButton>
+        </h3>
+        <AddItemForm addItem={addTask} />
+        <>{todolistProps.tasks.map(t => <Task key={t.id} id={t.id} title={t.title} isDone={t.isDone} />)}</>
         <div>
-            <h3><EditableSpan title={todolistProps.title} onChange={changeTodolistTitle} /> <button onClick={removeTodolist}>x</button></h3>
-            <AddItemForm addItem={addTask} />
-            <ul>{todolistProps.tasks.map(t => <Task key={t.id} id={t.id} title={t.title} isDone={t.isDone} />)}</ul>
-            <div>
-                <button
-                    className={todolistProps.filter === "all" ? "active-filter" : ''}
-                    onClick={onAllClickHandler}>All</button>
-                <button
-                    className={todolistProps.filter === "active" ? "active-filter" : ''}
-                    onClick={onActiveClickHandler}>Active</button>
-                <button
-                    className={todolistProps.filter === "completed" ? "active-filter" : ''}
-                    onClick={onCompletedClickHandler}>Completed</button>
-            </div>
+            <Button
+                variant={todolistProps.filter === "all" ? "contained" : "text"}
+                onClick={onAllClickHandler}>All</Button>
+            <Button
+                variant={todolistProps.filter === "active" ? "contained" : "text"}
+                onClick={onActiveClickHandler}>Active</Button>
+            <Button
+                variant={todolistProps.filter === "completed" ? "contained" : "text"}
+                onClick={onCompletedClickHandler}>Completed</Button>
         </div>
-    );
+    </>
 }

@@ -1,3 +1,5 @@
+import { ControlPoint } from "@mui/icons-material";
+import { IconButton, TextField } from "@mui/material";
 import { useState } from "react";
 
 type AddItemFormPropsType = {
@@ -26,14 +28,15 @@ export function AddItemForm(props: AddItemFormPropsType) {
 
     return (
         <div>
-            <input
-                className={error ? "error" : ""}
+            <TextField
+                label="Type value"
+                error={!!error}
                 value={title}
                 onChange={onNewTitleChangeHandler}
                 onKeyDown={onKeyDownHandler}
+                helperText={error}
             />
-            <button onClick={addTask}>+</button>
-            {error && <div className="error-message">{error}</div>}
+            <IconButton onClick={addTask} color="primary"><ControlPoint /></IconButton>
         </div>
     );
 }
